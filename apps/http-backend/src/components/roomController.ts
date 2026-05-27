@@ -49,3 +49,21 @@ export const room = async (req:Request,res:Response,next:NextFunction)=>{
 
 
 } 
+
+
+export const roomId = async (req:Request,res:Response,next:NextFunction)=>{
+    const roomId = Number(req.params.roomId)
+    const message = await prisma.chat.findMany({
+        where:{
+            roomId:roomId
+        },
+        orderBy:{
+            id:"desc"
+        },
+        take:50
+    })
+
+    
+
+
+}
