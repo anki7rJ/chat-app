@@ -1,18 +1,21 @@
 import { NextFunction, Request, Response } from "express";
-import {signinSchema, signupSchema} from "@repo/common/src/validation"
+import {signinSchema, signupSchema} from "@repo/common"
 import { prisma } from "@repo/db";
 import bcrypt, { hash } from "bcrypt"
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "@repo/backend-common";
 
 
 
 export const signup =async  (req:Request,res:Response,next:NextFunction)=>{
   try {
+    
       const response = signupSchema.safeParse(req.body)
-    if(!response.success){
+      
+     if(!response.success){
         return res.status(400).json({
             status:false,
-            message:"signUp failed"
+            message:response.error.issues[0]?.message
         })
     }
 
@@ -51,7 +54,7 @@ export const signup =async  (req:Request,res:Response,next:NextFunction)=>{
 
 }
 
-export  const signin =async  (req:Request,res:Response,next:NextFunction)=>{
+export  const signin =  async  (req:Request,res:Response,next:NextFunction)=>{
     try {
         const response = signinSchema.safeParse(req.body)
 
@@ -80,7 +83,8 @@ export  const signin =async  (req:Request,res:Response,next:NextFunction)=>{
 
         const hashedPassword = await foundUser.password
 
-        const verifyPasswrod = await bcrypt.compare(hashedPassword,password)
+        const verifyPasswrod = await bcrypt.compare(password,hashedPassword)
+        
 
         if(!verifyPasswrod){
             res.status(400).json({
@@ -89,7 +93,7 @@ export  const signin =async  (req:Request,res:Response,next:NextFunction)=>{
             })
         }
 
-        const token = jwt.sign({id:foundUser.id,email:foundUser.email},process.env.JWT_SECRET!,{expiresIn:"1h"})
+        const token = jwt.sign({id:foundUser.id,email:foundUser.email},JWT_SECRET,{expiresIn:"1h"})
         res.cookie("token",token,{
             path:'/',
             httpOnly:true,

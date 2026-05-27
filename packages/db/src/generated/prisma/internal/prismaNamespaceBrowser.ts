@@ -84,7 +84,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const RoomScalarFieldEnum = {
   id: 'id',
-  slud: 'slud',
+  slug: 'slug',
   createdAt: 'createdAt',
   adminId: 'adminId'
 } as const

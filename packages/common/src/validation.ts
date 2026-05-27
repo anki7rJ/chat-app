@@ -14,3 +14,8 @@ export const signupSchema = signinSchema.extend({
     path:["ConfirmPassword"]
 })
 
+
+export const createRoomSchema = z.object({
+    roomId:z.string().min(3).max(9)
+})
+
